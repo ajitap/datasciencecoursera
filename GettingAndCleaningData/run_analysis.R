@@ -29,7 +29,7 @@ names(features)<-c("FeaturesLabel","FeaturesName")
 
 ##Read Activity Data then Label the columns
 activityLabels <- read.table("UCI HAR Dataset/activity_labels.txt",stringsAsFactors=F)
-names(activityLabels)<-c("ActivityLabel", "ActivityName")
+##names(activityLabels)<-c("ActivityLabel", "ActivityName")
 
 ##Label Train Data
 names(y.train) <- "Label"
@@ -49,19 +49,19 @@ Final_TrainingSet <- cbind(subject.train,Final_TrainingSet)
 Final_TestSet <- cbind(y.test,X.test)
 Final_TestSet <- cbind(subject.test,Final_TestSet)
 
-##Q1.Merges the training and the test sets to create one data set
+##Item 1.Merges the training and the test sets to create one data set
 traingandtest_dataset<-rbind(Final_TrainingSet,Final_TestSet)
 
-##Q2.Extracts only the measurements on the mean and standard deviation for each measurement. 
+##Item 2.Extracts only the measurements on the mean and standard deviation for each measurement. 
 stdandmean_dataset <- traingandtest_dataset[,grepl('Subject|Label|mean\\(\\)|std\\(\\)',colnames(traingandtest_dataset))]
 
-##Q3.Uses descriptive activity names to name the activities in the data set
+##Item 3.Uses descriptive activity names to name the activities in the data set
 #Replace the code with corresponding Description
 stdandmean_dataset$Label <- factor(stdandmean_dataset$Label,labels=activityLabels$V2)
 #Rename the Column Name Label to ActivityName
 setnames(stdandmean_dataset, "Label", "ActivityName")
 
-##Q4.Appropriately labels the data set with descriptive variable names.
+##Item 4.Appropriately labels the data set with descriptive variable names.
 #Remove all special characters from the header attributes. Make more descriptive
 names(stdandmean_dataset)<-gsub("-","",names(stdandmean_dataset))
 names(stdandmean_dataset)<-gsub("\\(","",names(stdandmean_dataset))
@@ -70,7 +70,7 @@ names(stdandmean_dataset)<-gsub("^t","Time",names(stdandmean_dataset))
 names(stdandmean_dataset)<-gsub("^f","Freqncy",names(stdandmean_dataset))
 names(stdandmean_dataset)<-gsub("std","STD",names(stdandmean_dataset))
 
-##5.From the data set in step 4, creates a second, independent tidy data 
+##Item 5.From the data set in step 4, creates a second, independent tidy data 
 ##set with the average of each variable for each activity and each subject.
 attach(stdandmean_dataset)
 aggdata <-aggregate(stdandmean_dataset, by=list(ActivityNameGroup=ActivityName,SubjectGroup=Subject),FUN=mean, na.rm=FALSE)
@@ -81,3 +81,5 @@ detach(stdandmean_dataset)
 
 ##Write the output tidy data to csv files 
 write.csv(aggdata, file = "UCI_HAR_Tidy_Dataset.csv", row.names = FALSE)
+write.table(aggdata, file = "UCI_HAR_Tidy_Dataset.txt", row.names = FALSE)
+
